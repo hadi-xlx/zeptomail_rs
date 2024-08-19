@@ -1,3 +1,6 @@
+//! ## File Upload to Cache
+//! This module contains the implementation for uploading files to the cache using the ZeptoMail API.
+
 use reqwest::multipart::{Form, Part};
 use reqwest::{Response, StatusCode};
 
@@ -10,6 +13,53 @@ use crate::{
 };
 
 impl ZeptoMailClient {
+    /// Uploads a file to the cache using the ZeptoMail API.
+    ///
+    /// This function uploads a file to the ZeptoMail cache. It constructs a multipart form with the file data
+    /// and sends the request to the API.
+    ///
+    /// # Arguments
+    ///
+    /// * `file_upload_request` - A `FileUploadRequest` struct containing the details of the file to be uploaded, 
+    ///   including the file name, content type, and file data.
+    ///
+    /// # Returns
+    ///
+    /// This function returns a `Result`:
+    /// * `Ok(FileUploadResponse)` - If the file is successfully uploaded, containing the API response.
+    /// * `Err(ZeptoMailError)` - If an error occurs, containing the error details.
+    ///
+    /// # Errors
+    ///
+    /// This function can return the following errors:
+    /// * `ZeptoMailError::ApiError` - If the API returns an error response.
+    /// * `ZeptoMailError::NetworkError` - If there is a network issue while sending the request.
+    /// * `ZeptoMailError::SerializationError` - If there is an issue serializing or deserializing the request/response.
+    ///
+    /// # Example
+    ///
+    /// ```rust,no_run
+    /// use zeptomail_rs::{ZeptoMailClient,FileUploadRequest, FileUploadResponse};
+    /// use std::error::Error;
+    ///
+    /// #[tokio::main]
+    /// async fn main() -> Result<(), Box<dyn Error>> {
+    ///     let client = ZeptoMailClient::new("your_api_key")?;
+    ///
+    ///     let file_upload_request = FileUploadRequest {
+    ///         name: "example.txt".to_string(),
+    ///         content_type: "text/plain".to_string(),
+    ///         data: b"Hello, world!".to_vec(),
+    ///     };
+    ///
+    ///     match client.upload_file_to_cache(file_upload_request).await {
+    ///         Ok(response) => println!("File uploaded successfully: {:?}", response),
+    ///         Err(e) => eprintln!("Failed to upload file: {}", e),
+    ///     }
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn upload_file_to_cache(
         &self,
         file_upload_request: FileUploadRequest
